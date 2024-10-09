@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ó Valiño - Deja tu reseña</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Montserrat:wght@600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: black;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            position: relative;
+        }
+        .container {
+            background-color: #2a2a2a;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        h1, h2 {
+            font-family: 'Montserrat', sans-serif;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        h1 {
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #ccc;
+        }
+        .btn {
+            padding: 10px 20px;
+            margin: 10px 0;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 8px;
+            border: none;
+            width: 100%;
+            transition: background-color 0.3s;
+            font-family: 'Roboto', sans-serif;
+        }
+        .excellent {
+            background-color: #28a745;
+            color: white;
+        }
+        .adequate {
+            background-color: #ffc107;
+            color: black;
+        }
+        .unsatisfactory {
+            background-color: #dc3545;
+            color: white;
+        }
+        #reviewForm {
+            display: none;
+            margin-top: 20px;
+            text-align: left;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            background-color: #222;
+            color: white;
+            font-family: 'Roboto', sans-serif;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            background-color: #222;
+            color: white;
+            font-family: 'Roboto', sans-serif;
+        }
+        #reviewList {
+            margin-top: 30px;
+            text-align: left;
+        }
+        .review-entry {
+            padding: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 10px;
+            border-radius: 8px;
+        }
+        .review-author {
+            font-weight: bold;
+        }
+        .review-comment {
+            font-style: italic;
+            color: #ddd;
+        }
+        #adminPanel {
+            display: none;
+            margin-top: 20px;
+        }
+        .admin-btn {
+            background-color: #4b4b4b;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        .admin-btn:hover {
+            background-color: #6d6d6d;
+        }
+        #adminLogin {
+            margin-top: 30px;
+            display: none;
+            text-align: left;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #333;
+            padding: 20px;
+            border-radius: 12px;
+            max-width: 300px;
+            width: 100%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        }
+        /* Posicionar el botón de acceso administrador */
+        .admin-access {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        .remove-btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 5px 10px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 5px;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Nombre del restaurante -->
+    <h1>Ó Valiño</h1>
+    <p class="subtitle">Bar-Restaurante</p>
+
+    <h2>¿Cómo calificaría su experiencia con nosotros?</h2>
+
+    <!-- Botón 5 caras - Excelente -->
+    <button class="btn excellent" onclick="window.location.href='https://maps.app.goo.gl/fQCXzMpLtzovS8KH9'">😊 Excelente</button>
+
+    <!-- Botón adecuada experiencia -->
+    <button class="btn adequate" onclick="showReviewForm('adecuada')">😐 Adecuada</button>
+
+    <!-- Botón insatisfactoria experiencia -->
+    <button class="btn unsatisfactory" onclick="showReviewForm('insatisfactoria')">😠 Insatisfactoria</button>
+
+    <!-- Sección de reseñas -->
+    <div id="reviewList">
+        <h2>Reseñas</h2>
+        <div id="reviews"></div>
+    </div>
+
+    <!-- Botón de acceso a administrador situado en la parte superior derecha -->
+    <button class="btn admin-btn admin-access" onclick="showAdminLogin()">Acceso Administrador</button>
+
+    <!-- Login de administrador, ahora un rectángulo en la parte superior derecha -->
+    <div id="adminLogin">
+        <h2>Iniciar sesión como administrador</h2>
+        <input type="text" id="adminUser" placeholder="Usuario">
+        <input type="password" id="adminPass" placeholder="Contraseña">
+        <button class="btn admin-btn" onclick="adminLogin()">Iniciar Sesión</button>
+    </div>
+
+    <!-- Panel de administrador para borrar reseñas -->
+    <div id="adminPanel">
+        <h2>Panel de administración</h2>
+        <div id="adminReviews"></div>
+    </div>
+</div>
+
+<!-- Formulario para dejar reseña -->
+<div id="reviewForm" style="display: none; margin-top: 20px; text-align: left;">
+    <input type="text" id="userNameSurname" placeholder="Tu nombre (opcional)">
+    <textarea id="userComment" placeholder="Escribe tu reseña aquí..."></textarea>
+    <button class="btn" id="submitReviewBtn" onclick="submitReview()">Enviar Reseña</button>
+</div>
+
+<script>
+    let reviews = []; // Array para almacenar reseñas
+
+    // Borrar todas las reseñas al cargar la página
+    localStorage.removeItem('reviews');
+
+    // Cargar reseñas desde localStorage al cargar la página
+    function loadReviews() {
+        const storedReviews = localStorage.getItem('reviews');
+        reviews = storedReviews ? JSON.parse(storedReviews) : [];
+        const reviewsContainer = document.getElementById('reviews');
+        reviewsContainer.innerHTML = ''; // Limpiar el contenedor antes de cargar
+
+        reviews.forEach(review => {
+            const publicComment = review.author || 'Anónima'; // Mostrar nombre o "Anónima"
+            const reviewColor = review.author ? 'green' : 'gray'; // Color según si hay autor
+            reviewEntry = document.createElement('div');
+            reviewEntry.className = 'review-entry';
+            reviewEntry.style.color = reviewColor; // Cambiar color según el autor
+            reviewEntry.style.backgroundColor = review.type === 'Adecuada' ? '#FFC107' : '#DC3545'; // Colores según tipo de reseña
+            reviewEntry.innerHTML = `
+                <span class="review-author">${publicComment}</span>
+                <div class="review-comment">${review.text}</div>
+                <span>Calificación: ${review.type}</span>
+            `;
+            reviewsContainer.appendChild(reviewEntry);
+        });
+    }
+
+    // Mostrar el formulario de reseña
+    function showReviewForm(type) {
+        const reviewForm = document.getElementById('reviewForm');
+        reviewForm.style.display = 'block';
+        reviewForm.dataset.type = type; // Guardar tipo de reseña en el formulario
+    }
+
+    // Enviar reseña
+    function submitReview() {
+        const type = document.getElementById('reviewForm').dataset.type;
+        const author = document.getElementById('userNameSurname').value;
+        const comment = document.getElementById('userComment').value;
+
+        const newReview = {
+            id: new Date().getTime(),
+            type: type === 'adecuada' ? 'Adecuada' : 'Insatisfactoria',
+            author: author.trim() || '', // Guardar el nombre o vacío
+            text: comment.trim()
+        };
+
+        // Agregar reseña al array y guardarla en localStorage
+        reviews.push(newReview);
+        localStorage.setItem('reviews', JSON.stringify(reviews));
+        loadReviews(); // Recargar las reseñas visibles para todos los usuarios
+
+        // Limpiar formulario
+        document.getElementById('userNameSurname').value = '';
+        document.getElementById('userComment').value = '';
+        document.getElementById('reviewForm').style.display = 'none';
+    }
+
+    // Mostrar panel de administrador
+    function showAdminLogin() {
+        const adminLogin = document.getElementById('adminLogin');
+        adminLogin.style.display = adminLogin.style.display === 'none' ? 'block' : 'none';
+    }
+
+    // Iniciar sesión como administrador
+    function adminLogin() {
+        const user = document.getElementById('adminUser').value;
+        const pass = document.getElementById('adminPass').value;
+
+        if (user === 'ExT' && pass === 'Q!W"E·R$T%Y&') {
+            document.getElementById('adminLogin').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+            loadAdminReviews(); // Cargar reseñas para administrar
+        } else {
+            alert('Usuario o contraseña incorrectos');
+        }
+    }
+
+    // Cargar reseñas en el panel de administración con opción de eliminar
+    function loadAdminReviews() {
+        const adminReviewsContainer = document.getElementById('adminReviews');
+        adminReviewsContainer.innerHTML = '';
+
+        reviews.forEach(review => {
+            const reviewEntry = document.createElement('div');
+            reviewEntry.className = 'review-entry';
+            reviewEntry.style.backgroundColor = review.type === 'Adecuada' ? '#FFC107' : '#DC3545'; // Colores según tipo de reseña
+            reviewEntry.innerHTML = `
+                <span class="review-author">${review.author || 'Anónima'}</span>
+                <div class="review-comment">${review.text}</div>
+                <span>Calificación: ${review.type}</span>
+                <button class="remove-btn" onclick="removeReview('${review.id}')">Eliminar</button>
+            `;
+            adminReviewsContainer.appendChild(reviewEntry);
+        });
+    }
+
+    // Eliminar reseña
+    function removeReview(reviewId) {
+        reviews = reviews.filter(review => review.id !== reviewId);
+        localStorage.setItem('reviews', JSON.stringify(reviews));
+        loadReviews(); // Recargar reseñas visibles para todos los usuarios
+        loadAdminReviews(); // Recargar reseñas en el panel de administración
+    }
+
+    // Cargar reseñas al cargar la página
+    loadReviews();
+</script>
+
+</body>
+</html>
